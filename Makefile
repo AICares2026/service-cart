@@ -20,7 +20,7 @@ ecr-login:
 
 .PHONY: build
 build:
-	docker build -t $(ECR_BASE)/$(SERVICE_NAME):$(IMAGE_TAG) .
+	docker build -f src/Dockerfile -t $(ECR_BASE)/$(SERVICE_NAME):$(IMAGE_TAG) .
 
 .PHONY: push
 push: ecr-login build
