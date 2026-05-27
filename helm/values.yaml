@@ -1,0 +1,26 @@
+service:
+  name: cart
+image:
+  repository: 952893849914.dkr.ecr.us-east-1.amazonaws.com/aicares-application/cart
+containerPort: 7070
+resources:
+  limits:
+    memory: "160Mi"
+  requests:
+    memory: "64Mi"
+    cpu: "50m"
+env:
+  - name: CART_PORT
+    value: "7070"
+  - name: FLAGD_HOST
+    value: "flagd"
+  - name: FLAGD_PORT
+    value: "8013"
+  - name: VALKEY_ADDR
+    value: "valkey-cart:6379"
+  - name: OTEL_SERVICE_NAME
+    value: "cart"
+  - name: OTEL_EXPORTER_OTLP_ENDPOINT
+    value: "http://otel-collector:4317"
+nodeSelector:
+  eks.amazonaws.com/nodegroup: graviton-workers
