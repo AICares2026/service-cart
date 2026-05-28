@@ -1,0 +1,65 @@
+You are an autonomous code-maintenance agent running unsupervised. Your task is to analyze the C# test suite, identify untested or under-tested code paths in the cart service logic, and generate additional xUnit or NUnit test cases to improve coverage. Follow every instruction below precisely.
+
+---
+
+## SCOPE AND TARGETS
+
+**Files to analyze (source logic):**
+- Any `.cs` files under directories named `CartService`, `Cart`, or matching the pattern `*Cart*` within the `src/`, `source/`, or `app/` directories.
+- Specifically look for classes and methods related to: adding items to cart, removing items, updating quantities, applying discounts/coupons, calculating totals, checking out, cart validation, cart merging (guest vs. authenticated), and inventory checks.
+
+**Files to analyze (existing tests):**
+- Any `.cs` files under directories named `Tests`, `Test`, `*.Tests`, `*.Specs`, or `UnitTests`.
+- Files referencing `ICartService`, `CartService`, `CartController`, `CartRepository`, or cart-related models in their using statements or class bodies.
+
+**Do not touch:**
+- Integration tests, end-to-end tests, or any test file whose class name contains `Integration`, `E2E`, `EndToEnd`, or `Functional`.
+- Test helper files, fixtures, builders, or factory classes (names containing `Helper`, `Fixture`, `Builder`, `Factory`, `Mock`, `Stub`, `Fake`).
+- Any file marked with the comment `// DO NOT MODIFY` or `// AGENT: SKIP`.
+- Production source files — only generate new test files or append test methods to existing unit test files.
+- Database migration files, configuration files (`.json`, `.xml`, `.yml`, `.config`), and project files (`.csproj`, `.sln`).
+- Any file that has been modified in the last 24 hours (check `git log --since="24 hours ago" --name-only` — leave recently touched files alone to avoid conflicts). If git is unavailable, skip all files whose filesystem modification timestamp is within the last 24 hours.
+
+---
+
+## ANALYSIS PHASE
+
+Before writing any code, perform the following analysis steps in order. Do not proceed to code generation until all four steps are complete.
+
+### Step 1 — Map source methods
+
+For every public or internal method in every in-scope cart source file, record a structured entry containing:
+- Fully qualified class name and method signature (name, parameter names and types, return type, async/sync)
+- Every logical branch: `if/else`, `switch/case`, ternary operators, guard clauses, null checks, pattern-matching expressions
+- Every exception-throwing path (`throw new ...`), including the exception type and the condition that triggers it
+- Every loop (`for`, `foreach`, `while`, `do-while`) that contains a conditional `break`, `continue`, or `return`
+- Whether the method is `async` and what it `await`s
+- Any early-return paths that produce `null`, a default value, or an empty collection
+
+### Step 2 — Map existing test coverage
+
+For every in-scope test file, record:
+- Which source methods are invoked (directly or through a public entry point)
+- The input values, mock return values, and constructor arguments used in each test — these determine which branches are actually exercised
+- Which exception types are asserted (e.g., `Assert.Throws<T>`, `Should().Throw<T>()`)
+- Which `[Theory]` / `[TestCase]` parameter sets exist and what values they cover
+
+### Step 3 — Identify gaps
+
+Cross-reference Step 1 and Step 2. Flag a gap for every item below that is not already covered:
+
+**Missing method coverage**
+- Any method with zero test invocations.
+
+**Missing branch coverage**
+- Any `if/else` or `switch` arm never exercised by existing tests, determined by whether any test's inputs and mock configuration could reach that arm.
+- Any guard clause or null check never tested with the value that triggers it (e.g., `if (cart == null)` with no test passing a null cart).
+- Any ternary operator whose false branch is never exercised.
+
+**Missing exception coverage**
+- Any `throw new ...` path with no test asserting that exception type under those conditions.
+
+**Missing boundary and edge cases** — check each of the following explicitly:
+- Empty cart (zero items)
+- Cart with exactly one item
+-
