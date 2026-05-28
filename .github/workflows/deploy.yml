@@ -30,7 +30,7 @@ jobs:
 
       - name: Build and push image
         run: |
-          docker build -f src/Dockerfile \
+          docker buildx build --platform linux/amd64 --provenance=false -f src/Dockerfile \
             --build-arg BUILDPLATFORM=linux/amd64 \
             --build-arg TARGETARCH=amd64 \
             -t ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPO }}/${{ env.SERVICE_NAME }}:${{ github.sha }} .
