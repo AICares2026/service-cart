@@ -1,8 +1,6 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
-using System;
-
 using Grpc.Core;
 using Grpc.HealthCheck;
 using Grpc.Health.V1;
@@ -10,10 +8,7 @@ using System.Threading.Tasks;
 using System.Threading;
 
 using OpenFeature;
-using OpenFeature.Hooks;
-using OpenFeature.Providers.Flagd;
 
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 
@@ -31,8 +26,7 @@ namespace cart.healthcheck
         {
 
             #pragma warning disable CA2016 // OpenFeature does not support CancellationToken
-            // Await the async call instead of blocking
-            bool isSet = await _featureClient.GetBooleanValueAsync("failedReadinessProbe", false); // Replace with actual check
+            bool isSet = await _featureClient.GetBooleanValueAsync("failedReadinessProbe", false);
             #pragma warning restore CA2016
             if (isSet)
             {
@@ -76,8 +70,7 @@ namespace cart.healthcheck
                 };
             }
 
-            // You can implement service-specific health checks here
-            // This example checks a specific service
+            // Check a specific service
             var serviceHealth = await _healthCheckService.CheckHealthAsync(registration => MatchesService(registration, request.Service), cancellationToken);
             return new HealthCheckResponse
             {
@@ -99,9 +92,6 @@ namespace cart.healthcheck
             // Simple implementation to send current status once
             var response = await Check(request, context);
             await responseStream.WriteAsync(response);
-
-            // In a real implementation, you would periodically check health and send updates
-            // This might involve setting up a timer or listener for health changes
         }
 
         private static HealthCheckResponse.Types.ServingStatus ConvertToGrpcStatus(HealthStatus status)
@@ -109,7 +99,7 @@ namespace cart.healthcheck
             return status switch
             {
                 HealthStatus.Healthy => HealthCheckResponse.Types.ServingStatus.Serving,
-                HealthStatus.Degraded => HealthCheckResponse.Types.ServingStatus.Serving, // Or you might want to use SERVING_WITH_ISSUES if available
+                HealthStatus.Degraded => HealthCheckResponse.Types.ServingStatus.Serving,
                 HealthStatus.Unhealthy => HealthCheckResponse.Types.ServingStatus.NotServing,
                 _ => HealthCheckResponse.Types.ServingStatus.Unknown
             };

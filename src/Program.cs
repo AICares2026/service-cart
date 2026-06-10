@@ -3,12 +3,6 @@
 using System;
 
 using Grpc.Health.V1;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using System.Threading.Tasks;
-using System.Threading;
-
-using Grpc.Core;
-
 using cart.cartstore;
 using cart.services;
 using cart.healthcheck;
@@ -107,5 +101,3 @@ app.MapGet("/", async context =>
 });
 
 app.Run();
-
-
