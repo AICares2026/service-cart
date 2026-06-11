@@ -35,7 +35,8 @@ public class CartServiceTests
         string userId = Guid.NewGuid().ToString();
 
         // Create a GRPC communication channel between the client and the server
-        var channel = GrpcChannel.ForAddress(httpClient.BaseAddress, new GrpcChannelOptions
+        // httpClient.BaseAddress is guaranteed non-null by TestServer.GetTestClient().
+        var channel = GrpcChannel.ForAddress(httpClient.BaseAddress!, new GrpcChannelOptions
         {
             HttpClient = httpClient
         });
@@ -64,7 +65,8 @@ public class CartServiceTests
         string userId = Guid.NewGuid().ToString();
 
         // Create a GRPC communication channel between the client and the server
-        var channel = GrpcChannel.ForAddress(httpClient.BaseAddress, new GrpcChannelOptions
+        // httpClient.BaseAddress is guaranteed non-null by TestServer.GetTestClient().
+        var channel = GrpcChannel.ForAddress(httpClient.BaseAddress!, new GrpcChannelOptions
         {
             HttpClient = httpClient
         });
@@ -110,7 +112,8 @@ public class CartServiceTests
         string userId = Guid.NewGuid().ToString();
 
         // Create a GRPC communication channel between the client and the server
-        var channel = GrpcChannel.ForAddress(httpClient.BaseAddress, new GrpcChannelOptions
+        // httpClient.BaseAddress is guaranteed non-null by TestServer.GetTestClient().
+        var channel = GrpcChannel.ForAddress(httpClient.BaseAddress!, new GrpcChannelOptions
         {
             HttpClient = httpClient
         });

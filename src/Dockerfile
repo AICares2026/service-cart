@@ -32,10 +32,15 @@ RUN dotnet publish ./cart.csproj -r linux-musl-$TARGETARCH --no-restore -o /cart
 # https://mcr.microsoft.com/v2/dotnet/runtime-deps/tags/list
 FROM mcr.microsoft.com/dotnet/runtime-deps:10.0-alpine3.22
 
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
 WORKDIR /usr/src/app/
 COPY --from=builder /cart/ ./
+
+RUN chown -R appuser:appgroup /usr/src/app/
 
 ENV DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE=false
 
 EXPOSE ${CART_PORT}
+USER appuser
 ENTRYPOINT [ "./cart" ]
