@@ -12,7 +12,7 @@ Never modify:
 
 ## Conventions
 - One `.csproj` per logical service layer (e.g. API, Domain, Infrastructure, Tests)
-- Test project names end in `.Tests`; test files follow `<ClassUnderTest>Tests.cs`
+- Test project names end in `.tests`; test files follow `<ClassUnderTest>Tests.cs`
 - Test methods use `MethodName_Scenario_ExpectedResult` naming
 - Production code lives alongside its `.csproj`; no flat src/ dump
 - Dead code removal must not delete `public` members without verifying no external callers across all projects
